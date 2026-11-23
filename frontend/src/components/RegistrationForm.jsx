@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useRegistrations } from "../utils/RegistrationContext";
+import { useStudyPrograms } from "../utils/StudyProgramContext";
 
 // Nilai awal seluruh input formulir
 const initialForm = {
@@ -14,9 +15,11 @@ const initialForm = {
 };
 
 function RegistrationForm({ editingRegistration, onCancel }) {
-  // Mengambil data program studi dan fungsi CRUD dari context
-  const { studyPrograms, addRegistration, updateRegistration } =
-    useRegistrations();
+  // Mengambil fungsi CRUD pendaftaran
+  const { addRegistration, updateRegistration } = useRegistrations();
+
+  // Mengambil data program studi dari context terpisah
+  const { studyPrograms } = useStudyPrograms();
 
   // Menyimpan nilai input formulir
   const [form, setForm] = useState(initialForm);

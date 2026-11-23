@@ -1,32 +1,7 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
-
-import { useRegistrations } from "../utils/RegistrationContext";
 import RegistrationForm from "../components/RegistrationForm";
-import RegistrationTable from "../components/RegistrationTable";
+import LogoutButton from "../components/LogoutButton";
 
 function RegistrationPage() {
-  // Mengambil fungsi delete dari context
-  const { deleteRegistration } = useRegistrations();
-
-  // Menggunakan navigate untuk berpindah halaman
-  const navigate = useNavigate();
-
-  // Menangani proses penghapusan data
-  const handleDelete = async (id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-      return;
-    }
-
-    try {
-      await deleteRegistration(id);
-      toast.success("Data pendaftaran berhasil dihapus.");
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Gagal menghapus data.");
-    }
-  };
-
   return (
     <div className="min-h-screen bg-slate-100 px-4 py-8 md:px-8">
       <div className="mx-auto max-w-6xl">
@@ -46,14 +21,13 @@ function RegistrationPage() {
           </p>
         </div>
 
-        {/* Formulir untuk menambahkan pendaftar */}
-        <RegistrationForm />
+        {/* Tombol untuk keluar dari akun */}
+        <div className="mb-5 flex justify-end">
+          <LogoutButton />
+        </div>
 
-        {/* Tabel data pendaftar */}
-        <RegistrationTable
-          onEdit={(item) => navigate(`/registrations/${item.id}/edit`)}
-          onDelete={handleDelete}
-        />
+        {/* Formulir khusus untuk menambahkan data pendaftaran */}
+        <RegistrationForm />
 
         {/* Footer halaman */}
         <footer className="py-6 text-center text-xs text-gray-500">

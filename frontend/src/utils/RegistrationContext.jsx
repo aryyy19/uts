@@ -1,18 +1,17 @@
-import React, { createContext, useContext } from "react";
+import { createContext, useContext } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-// Menghubungkan RegistrationContext dengan konfigurasi Axios
+// Menghubungkan RegistrationContext dengan Axios
 import apiClient from "./apiClient.js";
 
-// Membuat context untuk mengelola data pendaftaran
+// Membuat context khusus pendaftaran
 const RegistrationContext = createContext();
 
-// Membuat provider agar data dan fungsi API dapat digunakan komponen lain
+// Provider untuk menyediakan data pendaftaran
 export const RegistrationProvider = ({ children }) => {
-  // Mengambil fungsi untuk memperbarui cache React Query
   const queryClient = useQueryClient();
 
-  // GET: Mengambil seluruh data pendaftaran dari Laravel API
+  // Mengambil data pendaftaran dari Laravel API
   const {
     data: registrationData,
     isLoading,
@@ -25,26 +24,17 @@ export const RegistrationProvider = ({ children }) => {
     },
   });
 
-  // GET: Mengambil seluruh data program studi
-  const { data: studyPrograms } = useQuery({
-    queryKey: ["studyPrograms"],
-    queryFn: async () => {
-      const res = await apiClient.get("/study-programs");
-      return res.data.data;
-    },
-  });
-
-  // SHOW: Mengambil detail pendaftaran berdasarkan ID
+  // Mengambil data pendaftar berdasarkan ID
   const getRegistrationById = async (id) => {
     const res = await apiClient.get(`/registrations/${id}`);
     return res.data.data;
   };
 
-  // POST: Menambahkan data pendaftaran baru
+  // Menambahkan data pendaftaran
   const addRegistration = async (formData) => {
     const res = await apiClient.post("/registrations", formData);
 
-    // Memperbarui daftar pendaftaran setelah berhasil menambahkan data
+    // Memperbarui data pendaftaran setelah penambahan
     await queryClient.invalidateQueries({
       queryKey: ["registrations"],
     });
@@ -52,11 +42,11 @@ export const RegistrationProvider = ({ children }) => {
     return res.data;
   };
 
-  // PUT: Memperbarui data pendaftaran berdasarkan ID
+  // Memperbarui data pendaftaran
   const updateRegistration = async ({ id, data }) => {
     const res = await apiClient.put(`/registrations/${id}`, data);
 
-    // Memperbarui daftar pendaftaran setelah berhasil mengubah data
+    // Memperbarui data pendaftaran setelah update
     await queryClient.invalidateQueries({
       queryKey: ["registrations"],
     });
@@ -64,11 +54,11 @@ export const RegistrationProvider = ({ children }) => {
     return res.data;
   };
 
-  // DELETE: Menghapus data pendaftaran berdasarkan ID
+  // Menghapus data pendaftaran
   const deleteRegistration = async (id) => {
     const res = await apiClient.delete(`/registrations/${id}`);
 
-    // Memperbarui daftar pendaftaran setelah berhasil menghapus data
+    // Memperbarui data pendaftaran setelah delete
     await queryClient.invalidateQueries({
       queryKey: ["registrations"],
     });
@@ -76,13 +66,12 @@ export const RegistrationProvider = ({ children }) => {
     return res.data;
   };
 
-  // Menyediakan data dan fungsi agar dapat digunakan komponen lain
+  // Menyediakan data dan fungsi CRUD pendaftaran
   return (
     <RegistrationContext.Provider
       value={{
         registrations: registrationData?.data || [],
         pagination: registrationData,
-        studyPrograms,
         isLoading,
         isError,
         getRegistrationById,
@@ -96,7 +85,7 @@ export const RegistrationProvider = ({ children }) => {
   );
 };
 
-// Custom hook untuk mengakses RegistrationContext
+// Hook untuk menggunakan RegistrationContext
 export const useRegistrations = () => {
   return useContext(RegistrationContext);
 };
